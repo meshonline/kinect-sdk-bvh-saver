@@ -3,7 +3,7 @@ This project is based on the official Kinect SDK example, it will automatically 
 <br/>
 Then you may import the bvh files into Blender or other softwares to smooth animation curves.<br/>
 <br/>
-The project disables smooth feature by default, if you want to enable smooth feature, just modify the 'FILTER_MODE' macro to other values.
+The project disables smooth feature by default, if you want to enable smooth feature, just modify 'FILTER_MODE' to other values.
 ### Requirements
 Windows 7(32 bit or 64 bit)<br/>
 kinect for xbox 360<br/>
@@ -15,7 +15,7 @@ Microsoft Visual Studio 2010 Express Edition
 3.Install Microsoft Visual Studio 2010 Express Edition.<br/>
 4.Open the project, build and run.<br/>
 <br/>
-When the Kinect camera detect your body, the software will automatically record the skeleton animation to a bvh file, when the Kinect camera can not detect your body, the software will finish recording the bvh file.<br/>
+When the Kinect camera detects your body, the software will automatically record the skeleton animation to a bvh file, after the Kinect camera can not detect your body, the software will finish recording the bvh file, the output path is the current directory.<br/>
 <br/>
 Enter the Kinect camera's viewport, perform actions, then leave the viewport, repeat the steps, you can record many skeleton animation clips at one time.
 
