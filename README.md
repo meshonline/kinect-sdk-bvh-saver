@@ -25,4 +25,4 @@ Enter the Kinect camera's viewport, perform actions, then leave the viewport, re
 3.[Birdy's Notebook](http://bediyap.com/programming/convert-quaternion-to-euler-rotations/)<br/>
 4.[sunchy's Kinect_to_BVH_Console](https://github.com/isunchy/Kinect_to_BVH_Console)
 ### License
-MIT
+The MIT License (MIT)
