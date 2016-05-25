@@ -36,7 +36,7 @@ void KinectBVH::AddOffset(int i, const Vector4 &offset)
 }
 
 /**
-* Créé un nouveau fichier en fonction du nom reçu en paramètre, renvoi true si réussi sinon false
+* CrÃ©Ã© un nouveau fichier en fonction du nom reÃ§u en paramÃ¨tre, renvoi true si rÃ©ussi sinon false
 */
 bool KinectBVH::CreateBVHFile(string filename)
 {
@@ -57,7 +57,7 @@ bool KinectBVH::CreateBVHFile(string filename)
 }
 
 /**
-* Génère le fichier BVH
+* GÃ©nÃ¨re le fichier BVH
 */
 void KinectBVH::FillBVHFile()
 {
@@ -67,7 +67,7 @@ void KinectBVH::FillBVHFile()
 }
 
 /**
-* Génère la description du squelette pour le BVH
+* GÃ©nÃ¨re la description du squelette pour le BVH
 */
 void KinectBVH::CreateSkeletonInformation()
 {
@@ -241,7 +241,7 @@ void KinectBVH::CreateSkeletonInformation()
 }
 
 /**
-* Incrémente le nombre de frames
+* IncrÃ©mente le nombre de frames
 */
 void KinectBVH::IncrementNbFrames()
 {
@@ -249,7 +249,7 @@ void KinectBVH::IncrementNbFrames()
 }
 
 /**
-* Ajoute un squelette et ses informations pour les données de la capture de mouvements
+* Ajoute un squelette et ses informations pour les donnÃ©es de la capture de mouvements
 */
 void KinectBVH::AddBonesOrientation(KinectJoint *joints)
 {
@@ -259,7 +259,7 @@ void KinectBVH::AddBonesOrientation(KinectJoint *joints)
 }
 
 /**
-* Ajoute une position du joint Hip Center pour les données de la capture de mouvements
+* Ajoute une position du joint Hip Center pour les donnÃ©es de la capture de mouvements
 */
 void KinectBVH::AddPosition(const Vector4 &position)
 {
@@ -313,6 +313,20 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 	if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
 		// flip yaw data and turn from back to front
 		angles[0] = -angles[0] + M_PI;
+	}
+
+	if (idx == NUI_SKELETON_POSITION_ELBOW_LEFT) {
+		// swap yaw and roll
+		double t = angles[0];
+		angles[0] = -angles[2];
+		angles[2] = -t;
+	}
+
+	if (idx == NUI_SKELETON_POSITION_ELBOW_RIGHT) {
+		// swap yaw and roll
+		double t = angles[0];
+		angles[0] = angles[2];
+		angles[2] = -t;
 	}
 
 	if (idx == NUI_SKELETON_POSITION_WRIST_RIGHT) {
@@ -379,7 +393,7 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 }
 
 /**
-* Génère les données des mouvements pour le BVH
+* GÃ©nÃ¨re les donnÃ©es des mouvements pour le BVH
 */
 void KinectBVH::CreateMotionInformation()
 {
