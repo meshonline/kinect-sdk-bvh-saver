@@ -1,5 +1,6 @@
 # kinect-sdk-bvh-saver
-This project is based on the official Kinect SDK example, automatically save skeleton animation clips to bvh files, then you may import the bvh files into Blender to smooth curves.
+This project is based on the official Kinect SDK example, it will automatically save many skeleton animation clips to bvh files.<br/>
+Then you may import the bvh files into Blender or other softwares to smooth animation curves.
 ### Requirements
 Windows 7(32 bit or 64 bit)<br/>
 kinect for xbox 360<br/>
@@ -7,7 +8,7 @@ Microsoft Kinect for Windows SDK 1.7<br/>
 Microsoft Visual Studio 2010 Express Edition
 ### How to use
 1.Install Microsoft Kinect for Windows SDK 1.7.<br/>
-2.Plug kinect for xbox 360
+2.Plug kinect for xbox 360<br/>
 3.Install Microsoft Visual Studio 2010 Express Edition.<br/>
 4.Open the project, build and run.<br/>
 <br/>
