@@ -409,6 +409,9 @@ void KinectBVH::CreateMotionInformation()
 		for(int j = 0; j < NUI_SKELETON_POSITION_COUNT; j++) {
 			double angles[3];
 			GetAngles(joints, j, angles);
+			if(_isnan(angles[0])) angles[0] = 0.;
+			if(_isnan(angles[1])) angles[1] = 0.;
+			if(_isnan(angles[2])) angles[2] = 0.;
 			flux << angles[2] * Vec_Math::kRadToDeg << " " << angles[0] * Vec_Math::kRadToDeg << " " << angles[1] * Vec_Math::kRadToDeg << " ";
 		}
 		flux << endl;
