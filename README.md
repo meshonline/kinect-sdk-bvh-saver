@@ -1,4 +1,4 @@
-![](http://www.mesh-online.net/mocap.png)
+![](mocap.png)
 # kinect-sdk-bvh-saver
 This project is based on the official Kinect SDK example, it will automatically save many skeleton animation clips to bvh files.<br/>
 <br/>
