@@ -310,9 +310,14 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 	Quat2Euler::Quaternion q_to_convert(q_delta.x, q_delta.y, q_delta.z, q_delta.w);
 	Quat2Euler::quaternion2Euler(q_to_convert, angles, Quat2Euler::zxy);
 
+	if (idx == NUI_SKELETON_POSITION_SHOULDER_RIGHT) {
+		// flip yaw data
+		angles[0] = -angles[0];
+	}
+
 	if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
-		// flip yaw data and turn from back to front
-		angles[0] = -angles[0] + M_PI;
+		// turn from back to front
+		angles[0] = angles[0] + M_PI;
 	}
 
 	if (idx == NUI_SKELETON_POSITION_ELBOW_LEFT) {
