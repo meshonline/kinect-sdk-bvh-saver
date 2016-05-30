@@ -343,7 +343,12 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 		// swap pitch and yaw
 		double t = angles[0];
 		angles[0] = -angles[1];
-		angles[1] = -t;
+		angles[1] = t;
+	}
+
+	if (idx == NUI_SKELETON_POSITION_HIP_LEFT) {
+		// flip yaw data
+		angles[1] = -angles[1];
 	}
 
 	if (idx == NUI_SKELETON_POSITION_KNEE_LEFT) {
