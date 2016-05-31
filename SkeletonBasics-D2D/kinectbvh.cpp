@@ -5,10 +5,10 @@
 */
 KinectBVH::KinectBVH()
 {
-	q_z_40 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 40.f*Vec_Math::kDegToRad);
-	q_z_320 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 320.f*Vec_Math::kDegToRad);
 	q_z_30 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 30.f*Vec_Math::kDegToRad);
-	q_z_330 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 330.f*Vec_Math::kDegToRad);
+	q_z_n30 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, -30.f*Vec_Math::kDegToRad);
+	q_z_40 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 40.f*Vec_Math::kDegToRad);
+	q_z_n40 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, -40.f*Vec_Math::kDegToRad);
 }
 
 /**
@@ -275,12 +275,12 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 {
 	Vec_Math::Quaternion q;
 
-	// set identity quaternion on bone tip
-	if (idx==NUI_SKELETON_POSITION_HEAD||
-		idx==NUI_SKELETON_POSITION_HAND_LEFT||
-		idx==NUI_SKELETON_POSITION_HAND_RIGHT||
-		idx==NUI_SKELETON_POSITION_FOOT_LEFT||
-		idx==NUI_SKELETON_POSITION_FOOT_RIGHT) {
+	// get identity quaternion on bone tip
+	if (idx == NUI_SKELETON_POSITION_HEAD ||
+		idx == NUI_SKELETON_POSITION_HAND_LEFT ||
+		idx == NUI_SKELETON_POSITION_HAND_RIGHT ||
+		idx == NUI_SKELETON_POSITION_FOOT_LEFT ||
+		idx == NUI_SKELETON_POSITION_FOOT_RIGHT) {
 		q = Vec_Math::quat_identity;
 	} else {
 		// get bone's quaternion from bone tip
@@ -292,112 +292,60 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 	}
 
 
-	// correct some bones
+	// roll a few bones to make the skeleton T pose
 	Vec_Math::Quaternion q_delta;
 	if (idx == NUI_SKELETON_POSITION_SHOULDER_RIGHT) {
-		q_delta = Vec_Math::quat_multiply(q_z_30, q);
+		q_delta = Vec_Math::quat_multiply(q, q_z_30);
 	} else if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
-		q_delta = Vec_Math::quat_multiply(q_z_330, q);
+		q_delta = Vec_Math::quat_multiply(q, q_z_n30);
 	} else if (idx == NUI_SKELETON_POSITION_HIP_RIGHT) {
-		q_delta = Vec_Math::quat_multiply(q_z_320, q);
+		q_delta = Vec_Math::quat_multiply(q, q_z_n40);
 	} else if (idx == NUI_SKELETON_POSITION_HIP_LEFT) {
-		q_delta = Vec_Math::quat_multiply(q_z_40, q);
+		q_delta = Vec_Math::quat_multiply(q, q_z_40);
 	} else {
 		q_delta = q;
 	}
 
-	// convert the quaternion to euler angles by ZXY order
+	// convert the quaternion to euler angles by different orders to get right euler angles
 	Quat2Euler::Quaternion q_to_convert(q_delta.x, q_delta.y, q_delta.z, q_delta.w);
-	Quat2Euler::quaternion2Euler(q_to_convert, angles, Quat2Euler::zxy);
+	Quat2Euler::quaternion2Euler(q_to_convert, angles, (idx < NUI_SKELETON_POSITION_HIP_LEFT) ? Quat2Euler::zxy : Quat2Euler::zyx);
 
+	// adjust a few bones to fit BVH skeleton
 	if (idx == NUI_SKELETON_POSITION_SHOULDER_RIGHT) {
 		// flip yaw data
 		angles[0] = -angles[0];
 	}
 
 	if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
-		// turn from back to front
-		angles[0] = angles[0] + M_PI;
+		// rotate around yaw, turn the arm from back to front
+		angles[0] += M_PI;
 	}
 
-	if (idx == NUI_SKELETON_POSITION_ELBOW_LEFT) {
-		// swap yaw and roll
-		double t = angles[0];
-		angles[0] = -angles[2];
-		angles[2] = -t;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_ELBOW_RIGHT) {
-		// swap yaw and roll
-		double t = angles[0];
-		angles[0] = angles[2];
-		angles[2] = -t;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_WRIST_RIGHT) {
-		// flip roll data
-		angles[2] = -angles[2];
-	}
-
-	if (idx == NUI_SKELETON_POSITION_HIP_RIGHT) {
-		// swap pitch and yaw
-		double t = angles[0];
-		angles[0] = -angles[1];
-		angles[1] = t;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_HIP_LEFT) {
-		// flip yaw data
-		angles[1] = -angles[1];
-	}
-
-	if (idx == NUI_SKELETON_POSITION_KNEE_LEFT) {
-		// swap pitch and yaw
-		double t = angles[0];
-		angles[0] = -angles[1];
-		angles[1] = -t;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_KNEE_RIGHT) {
-		// swap pitch and yaw
-		double t = angles[0];
-		angles[0] = -angles[1];
-		angles[1] = -t;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_ANKLE_LEFT) {
-		// swap pitch ,yaw and roll
-		double t = angles[0];
-		angles[0] = angles[1];
-		angles[1] = angles[2];
-		angles[2] = t;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_ANKLE_RIGHT) {
-		// swap pitch ,yaw and roll
-		double t = angles[0];
-		angles[0] = angles[1];
-		angles[1] = angles[2];
-		angles[2] = t;
+	if (idx == NUI_SKELETON_POSITION_HIP_RIGHT ||
+		idx == NUI_SKELETON_POSITION_HIP_LEFT ||
+		idx == NUI_SKELETON_POSITION_KNEE_LEFT ||
+		idx == NUI_SKELETON_POSITION_KNEE_RIGHT) {
+		// flip pitch data
+		angles[0] = -angles[0];
 	}
 
 	// clamp to valid range
-	if (angles[0] > M_PI) {
+	while (angles[0] > M_PI) {
 		angles[0] -= Vec_Math::k2Pi;
 	}
-	if (angles[0] < -M_PI) {
+	while (angles[0] < -M_PI) {
 		angles[0] += Vec_Math::k2Pi;
 	}
-	if (angles[1] > M_PI) {
+	while (angles[1] > M_PI) {
 		angles[1] -= Vec_Math::k2Pi;
 	}
-	if (angles[1] < -M_PI) {
+	while (angles[1] < -M_PI) {
 		angles[1] += Vec_Math::k2Pi;
 	}
-	if (angles[2] > M_PI) {
+	while (angles[2] > M_PI) {
 		angles[2] -= Vec_Math::k2Pi;
 	}
-	if (angles[2] < -M_PI) {
+	while (angles[2] < -M_PI) {
 		angles[2] += Vec_Math::k2Pi;
 	}
 }
