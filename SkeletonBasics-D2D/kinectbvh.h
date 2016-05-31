@@ -23,7 +23,7 @@ struct KinectJoint
 };
 
 /**
-* Manipule les données de la Kinect que la classe KinectSkeleton a envoy?et génère le fichier BVH résultant de la capture de mouvements
+* Manipule les donné–‘s de la Kinect que la classe KinectSkeleton a envoy?et gé–šé‘¢e le fichier BVH ré–Ÿultant de la capture de mouvements
 */
 class KinectBVH
 {
@@ -42,23 +42,23 @@ public:
 	*/
 	void AddOffset(int, const Vector4 &);
 	/**
-	* Ajoute un squelette et ses informations pour les données de la capture de mouvements
+	* Ajoute un squelette et ses informations pour les donné–‘s de la capture de mouvements
 	*/
 	void AddBonesOrientation(KinectJoint *);
 	/**
-	* Ajoute une position du joint Hip Center pour les données de la capture de mouvements
+	* Ajoute une position du joint Hip Center pour les donné–‘s de la capture de mouvements
 	*/
 	void AddPosition(const Vector4 &);
 	/**
-	* Incrémente le nombre de frames
+	* Incré–™ente le nombre de frames
 	*/
 	void IncrementNbFrames();
 	/**
-	* Créé un nouveau fichier en fonction du nom reçu en paramètre, renvoi true si réussi sinon false
+	* Cræ®š un nouveau fichier en fonction du nom reé„ en paramé‘¤re, renvoi true si ré–¡ssi sinon false
 	*/
 	bool CreateBVHFile(string);
 	/**
-	* Génère le fichier BVH
+	* Gé–šé‘¢e le fichier BVH
 	*/
 	void FillBVHFile();
 private:
@@ -66,10 +66,10 @@ private:
 	ofstream m_pFile;
 
 	// pre-calculated quaternions
-	Vec_Math::Quaternion q_z_40;
-	Vec_Math::Quaternion q_z_320;
 	Vec_Math::Quaternion q_z_30;
-	Vec_Math::Quaternion q_z_330;
+	Vec_Math::Quaternion q_z_n30;
+	Vec_Math::Quaternion q_z_40;
+	Vec_Math::Quaternion q_z_n40;
 
 	// Offsets
 	vector<Vector4> m_aOffsets;
@@ -84,11 +84,11 @@ private:
 	void GetAngles(KinectJoint *, int, double []);
 
 	/**
-	* Génère la description du squelette pour le BVH
+	* Gé–šé‘¢e la description du squelette pour le BVH
 	*/
 	void CreateSkeletonInformation();
 	/**
-	* Génère les données des mouvements pour le BVH
+	* Gé–šé‘¢e les donné–‘s des mouvements pour le BVH
 	*/
 	void CreateMotionInformation();
 };
