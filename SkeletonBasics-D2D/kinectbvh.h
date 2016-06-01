@@ -68,8 +68,8 @@ private:
 	// pre-calculated quaternions
 	Vec_Math::Quaternion q_z_30;
 	Vec_Math::Quaternion q_z_n30;
-	Vec_Math::Quaternion q_z_40;
-	Vec_Math::Quaternion q_z_n40;
+	Vec_Math::Quaternion q_z_43;
+	Vec_Math::Quaternion q_z_n43;
 
 	// Offsets
 	vector<Vector4> m_aOffsets;
