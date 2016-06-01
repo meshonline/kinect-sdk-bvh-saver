@@ -1213,12 +1213,24 @@ namespace Vec_Math {
 		Quaternion norm = quat_normalize(q); /* Only normalized supported now */
 		return quat_conjugate(norm);
 	}
-	INLINE Quaternion quat_multiply(QUAT_INPUT l, QUAT_INPUT r)
+	INLINE Quaternion quat_left_multiply(QUAT_INPUT l, QUAT_INPUT r)
 	{
-		Quaternion q = {r.w*l.x + r.x*l.w + r.y*l.z - r.z*l.y,
+		Quaternion q = {
+			r.w*l.x + r.x*l.w + r.y*l.z - r.z*l.y,
 			r.w*l.y + r.y*l.w + r.z*l.x - r.x*l.z,
 			r.w*l.z + r.z*l.w + r.x*l.y - r.y*l.x,
-			r.w*l.w - r.x*l.x - r.y*l.y - r.z*l.z };
+			r.w*l.w - r.x*l.x - r.y*l.y - r.z*l.z
+		};
+		return q;
+	}
+	INLINE Quaternion quat_right_multiply(QUAT_INPUT l, QUAT_INPUT r)
+	{
+		Quaternion q = {
+			r.w*l.x + r.x*l.w - r.y*l.z + r.z*l.y,
+			r.w*l.y + r.y*l.w - r.z*l.x + r.x*l.z,
+			r.w*l.z + r.z*l.w - r.x*l.y + r.y*l.x,
+			r.w*l.w - r.x*l.x - r.y*l.y - r.z*l.z
+		};
 		return q;
 	}
 	INLINE Quaternion quat_from_euler(float pitch, float yaw, float roll)
