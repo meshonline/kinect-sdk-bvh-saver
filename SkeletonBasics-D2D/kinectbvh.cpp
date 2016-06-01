@@ -7,8 +7,8 @@ KinectBVH::KinectBVH()
 {
 	q_z_30 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 30.f*Vec_Math::kDegToRad);
 	q_z_n30 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, -30.f*Vec_Math::kDegToRad);
-	q_z_40 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 40.f*Vec_Math::kDegToRad);
-	q_z_n40 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, -40.f*Vec_Math::kDegToRad);
+	q_z_43 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, 43.f*Vec_Math::kDegToRad);
+	q_z_n43 = Vec_Math::quat_from_axis_anglef(0.f, 0.f, 1.f, -43.f*Vec_Math::kDegToRad);
 }
 
 /**
@@ -299,9 +299,9 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 	} else if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
 		q_delta = Vec_Math::quat_multiply(q, q_z_n30);
 	} else if (idx == NUI_SKELETON_POSITION_HIP_RIGHT) {
-		q_delta = Vec_Math::quat_multiply(q, q_z_n40);
+		q_delta = Vec_Math::quat_multiply(q, q_z_n43);
 	} else if (idx == NUI_SKELETON_POSITION_HIP_LEFT) {
-		q_delta = Vec_Math::quat_multiply(q, q_z_40);
+		q_delta = Vec_Math::quat_multiply(q, q_z_43);
 	} else {
 		q_delta = q;
 	}
@@ -327,6 +327,11 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 		idx == NUI_SKELETON_POSITION_KNEE_RIGHT) {
 		// flip pitch data
 		angles[0] = -angles[0];
+	}
+
+	// adjust kinect angle slightly
+	if (idx == NUI_SKELETON_POSITION_HIP_CENTER) {
+		angles[0] -= 8. * Vec_Math::kDegToRad;
 	}
 
 	// clamp to valid range
