@@ -327,10 +327,18 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 		idx == NUI_SKELETON_POSITION_KNEE_RIGHT) {
 		// flip pitch data
 		angles[0] = -angles[0];
+		// flip yaw data
+		angles[1] = -angles[1];
 	}
 
 	// adjust kinect angle slightly
 	if (idx == NUI_SKELETON_POSITION_HIP_CENTER) {
+		angles[0] -= 4. * Vec_Math::kDegToRad;
+	}
+
+	// adjust kinect angle slightly
+	if (idx == NUI_SKELETON_POSITION_HIP_LEFT ||
+		idx == NUI_SKELETON_POSITION_HIP_RIGHT) {
 		angles[0] -= 8. * Vec_Math::kDegToRad;
 	}
 
