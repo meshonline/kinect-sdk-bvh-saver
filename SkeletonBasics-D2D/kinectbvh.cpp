@@ -294,14 +294,14 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 
 	// roll a few bones to make the skeleton T pose
 	Vec_Math::Quaternion q_delta;
-	if (idx == NUI_SKELETON_POSITION_SHOULDER_RIGHT) {
-		q_delta = Vec_Math::quat_multiply(q, q_z_30);
-	} else if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
-		q_delta = Vec_Math::quat_multiply(q, q_z_n30);
-	} else if (idx == NUI_SKELETON_POSITION_HIP_RIGHT) {
-		q_delta = Vec_Math::quat_multiply(q, q_z_n43);
+	if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
+		q_delta = Vec_Math::quat_left_multiply(q, q_z_n30);
+	} else if (idx == NUI_SKELETON_POSITION_SHOULDER_RIGHT) {
+		q_delta = Vec_Math::quat_left_multiply(q, q_z_30);
 	} else if (idx == NUI_SKELETON_POSITION_HIP_LEFT) {
-		q_delta = Vec_Math::quat_multiply(q, q_z_43);
+		q_delta = Vec_Math::quat_left_multiply(q, q_z_43);
+	} else if (idx == NUI_SKELETON_POSITION_HIP_RIGHT) {
+		q_delta = Vec_Math::quat_left_multiply(q, q_z_n43);
 	} else {
 		q_delta = q;
 	}
@@ -310,19 +310,19 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 	Quat2Euler::Quaternion q_to_convert(q_delta.x, q_delta.y, q_delta.z, q_delta.w);
 	Quat2Euler::quaternion2Euler(q_to_convert, angles, (idx < NUI_SKELETON_POSITION_HIP_LEFT) ? Quat2Euler::zxy : Quat2Euler::zyx);
 
+	if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
+		// rotate around yaw, turn the arm from back to front
+		angles[0] += M_PI;
+	}
+
 	// adjust a few bones to fit BVH skeleton
 	if (idx == NUI_SKELETON_POSITION_SHOULDER_RIGHT) {
 		// flip yaw data
 		angles[0] = -angles[0];
 	}
 
-	if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
-		// rotate around yaw, turn the arm from back to front
-		angles[0] += M_PI;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_HIP_RIGHT ||
-		idx == NUI_SKELETON_POSITION_HIP_LEFT ||
+	if (idx == NUI_SKELETON_POSITION_HIP_LEFT ||
+		idx == NUI_SKELETON_POSITION_HIP_RIGHT ||
 		idx == NUI_SKELETON_POSITION_KNEE_LEFT ||
 		idx == NUI_SKELETON_POSITION_KNEE_RIGHT) {
 		// flip pitch data
@@ -332,6 +332,20 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 	// adjust kinect angle slightly
 	if (idx == NUI_SKELETON_POSITION_HIP_CENTER) {
 		angles[0] -= 8. * Vec_Math::kDegToRad;
+	}
+
+	if (idx == NUI_SKELETON_POSITION_ANKLE_LEFT) {
+		// swap yaw and roll
+		double t = angles[1];
+		angles[1] = angles[2];
+		angles[2] = t;
+	}
+
+	if (idx == NUI_SKELETON_POSITION_ANKLE_RIGHT) {
+		// swap yaw and roll
+		double t = angles[1];
+		angles[1] = angles[2];
+		angles[2] = t;
 	}
 
 	// clamp to valid range
