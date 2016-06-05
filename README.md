@@ -7,7 +7,7 @@ Then you can import the bvh files into Blender or other softwares to smooth anim
 The project has disabled kinect's built in smooth feature by default, for the result is poor, if you want to enable the built in smooth feature, there is a macro definition named 'FILTER_MODE', change it from 0 to 1, 2, 3 to enable three types of smooth feature.
 ### Requirements
 Windows 7(32 bit or 64 bit)<br/>
-kinect for xbox 360<br/>
+kinect for xbox 360.<br/>
 Microsoft Kinect for Windows SDK 1.7<br/>
 Microsoft Visual Studio 2010 Express Edition
 ### How to use
