@@ -1,4 +1,4 @@
-﻿//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // <copyright file="SkeletonBasics.cpp" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
@@ -10,7 +10,8 @@
 #include "resource.h"
 #include <time.h>
 
-#define FILTER_MODE 0
+#define FILTER_MODE 1
+#define DRAW_BONE_AXIS 1
 
 // Some smoothing with little latency (defaults).
 // Only filters out small jitters.
@@ -66,6 +67,9 @@ CSkeletonBasics::CSkeletonBasics() :
     m_pBrushJointInferred(NULL),
     m_pBrushBoneTracked(NULL),
     m_pBrushBoneInferred(NULL),
+    m_pBrushAxisX(NULL),
+    m_pBrushAxisY(NULL),
+    m_pBrushAxisZ(NULL),
     m_pNuiSensor(NULL)
 {
     ZeroMemory(m_Points,sizeof(m_Points));
@@ -258,7 +262,7 @@ void CSkeletonBasics::CalibrateSkeleton(const NUI_SKELETON_DATA &skeleton)
 /**
 * Conversion et envoi des matrices de rotation pour la g閚閞ation du fichier BVH
 */
-void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel)
+void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int windowWidth, int windowHeight)
 {
 	NUI_SKELETON_BONE_ORIENTATION boneOrientations[NUI_SKELETON_POSITION_COUNT];
 	NuiSkeletonCalculateBoneOrientations(&skel, boneOrientations);
@@ -276,6 +280,49 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel)
 		joint.quat = (i==0)?orientation.absoluteRotation.rotationQuaternion:orientation.hierarchicalRotation.rotationQuaternion;
 
 		joints[i] = joint;
+
+		// draw axis
+		if (DRAW_BONE_AXIS == 1) {
+			NUI_SKELETON_POSITION_TRACKING_STATE jointState = skel.eSkeletonPositionTrackingState[i];
+		    if (jointState == NUI_SKELETON_POSITION_TRACKED)
+			{
+				Vec_Math::Vec3 arrow;
+				Vector4 point_3d;
+				D2D1_POINT_2F point_2d;
+				Vec_Math::Quaternion q;
+
+				q.x = orientation.absoluteRotation.rotationQuaternion.x;
+				q.y = orientation.absoluteRotation.rotationQuaternion.y;
+				q.z = orientation.absoluteRotation.rotationQuaternion.z;
+				q.w = orientation.absoluteRotation.rotationQuaternion.w;
+
+				float scale_ratio = 0.1f;
+
+				arrow = Vec_Math::quat_get_x_axis(q);
+				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
+				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
+				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
+				point_3d.w = skel.SkeletonPositions[i].w;
+				point_2d = SkeletonToScreen(point_3d, windowWidth, windowHeight);
+				m_pRenderTarget->DrawLine(m_Points[i], point_2d, m_pBrushAxisX, 3.0f);
+
+				arrow = Vec_Math::quat_get_y_axis(q);
+				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
+				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
+				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
+				point_3d.w = skel.SkeletonPositions[i].w;
+				point_2d = SkeletonToScreen(point_3d, windowWidth, windowHeight);
+				m_pRenderTarget->DrawLine(m_Points[i], point_2d, m_pBrushAxisY, 3.0f);
+
+				arrow = Vec_Math::quat_get_z_axis(q);
+				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
+				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
+				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
+				point_3d.w = skel.SkeletonPositions[i].w;
+				point_2d = SkeletonToScreen(point_3d, windowWidth, windowHeight);
+				m_pRenderTarget->DrawLine(m_Points[i], point_2d, m_pBrushAxisZ, 3.0f);
+			}
+		}
     }
 
 	m_pKinectBVH->AddBonesOrientation(joints);
@@ -625,7 +672,7 @@ void CSkeletonBasics::DrawSkeleton(const NUI_SKELETON_DATA & skel, int windowWid
 
 	if (IsRecording() == true && IsCalibrated() == true)
 	{
-		ProcessBonesOrientation(skel);
+		ProcessBonesOrientation(skel, windowWidth, windowHeight);
 	}
 
     // Render Torso
@@ -768,6 +815,9 @@ HRESULT CSkeletonBasics::EnsureDirect2DResources()
         m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Yellow, 1.0f), &m_pBrushJointInferred);
         m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Green, 1.0f), &m_pBrushBoneTracked);
         m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Gray, 1.0f), &m_pBrushBoneInferred);
+        m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red, 1.0f), &m_pBrushAxisX);
+        m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Yellow, 1.0f), &m_pBrushAxisY);
+        m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Blue, 1.0f), &m_pBrushAxisZ);
     }
 
     return hr;
@@ -784,6 +834,9 @@ void CSkeletonBasics::DiscardDirect2DResources( )
     SafeRelease(m_pBrushJointInferred);
     SafeRelease(m_pBrushBoneTracked);
     SafeRelease(m_pBrushBoneInferred);
+    SafeRelease(m_pBrushAxisX);
+    SafeRelease(m_pBrushAxisY);
+    SafeRelease(m_pBrushAxisZ);
 }
 
 /// <summary>
