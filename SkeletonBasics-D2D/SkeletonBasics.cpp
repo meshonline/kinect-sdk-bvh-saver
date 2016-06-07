@@ -299,7 +299,7 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 				float scale_ratio = 0.1f;
 
 				arrow = Vec_Math::quat_get_x_axis(q);
-				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
+				point_3d.x = skel.SkeletonPositions[i].x - arrow.x * scale_ratio;
 				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
 				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
 				point_3d.w = skel.SkeletonPositions[i].w;
@@ -307,7 +307,7 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 				m_pRenderTarget->DrawLine(m_Points[i], point_2d, m_pBrushAxisX, 3.0f);
 
 				arrow = Vec_Math::quat_get_y_axis(q);
-				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
+				point_3d.x = skel.SkeletonPositions[i].x - arrow.x * scale_ratio;
 				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
 				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
 				point_3d.w = skel.SkeletonPositions[i].w;
@@ -315,7 +315,7 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 				m_pRenderTarget->DrawLine(m_Points[i], point_2d, m_pBrushAxisY, 3.0f);
 
 				arrow = Vec_Math::quat_get_z_axis(q);
-				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
+				point_3d.x = skel.SkeletonPositions[i].x - arrow.x * scale_ratio;
 				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
 				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
 				point_3d.w = skel.SkeletonPositions[i].w;
