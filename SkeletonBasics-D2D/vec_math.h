@@ -1233,6 +1233,7 @@ namespace Vec_Math {
 		};
 		return q;
 	}
+    // roll->yaw->pitch order, which roll is outer, pitch is inner.
 	INLINE Quaternion quat_from_euler(float pitch, float yaw, float roll)
 	{
 		float x = pitch/2;
@@ -1257,7 +1258,19 @@ namespace Vec_Math {
 
 		return q;
 	}
-
+    // roll->yaw->pitch order, which roll is outer, pitch is inner.
+    INLINE Vec3 euler_from_quat(QUAT_INPUT q)
+    {
+        Vec3 ret;
+        ret.x = atan2f(2 * (q.w * q.x + q.y * q.z), 1 - 2 * (q.x*q.x + q.y*q.y));
+        ret.y = asinf(2 * (q.w * q.y - q.z * q.x));
+        ret.z = atan2f(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y*q.y + q.z*q.z));
+        // fix nan value
+        if(_isnan(ret.x)) ret.x = 0.f;
+        if(_isnan(ret.y)) ret.y = 0.f;
+        if(_isnan(ret.z)) ret.z = 0.f;
+        return ret;
+    }
 	INLINE Vec3 quat_get_x_axis(QUAT_INPUT q)
 	{
 		Vec3 ret = {
