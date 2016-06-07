@@ -291,6 +291,37 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 			joints[idx+1].quat.w);
 	}
 
+	// we swap axis to get rid of bind pose, refer to joint axis.
+	//                           
+	//                           
+	//                           
+	//      0---Y            X---0
+	//     /|        ----\      /|
+	//    / |        ----/     / |
+	//   Z  X                 Z  Y
+	// note that their parent are hip left and hip right!
+	if (idx == NUI_SKELETON_POSITION_HIP_LEFT || idx == NUI_SKELETON_POSITION_HIP_RIGHT ||
+		idx == NUI_SKELETON_POSITION_KNEE_LEFT || idx == NUI_SKELETON_POSITION_KNEE_RIGHT) {
+		float t = q.x;
+		q.x = -q.y;
+		q.y = t;
+	}
+
+	// we swap axis to get rid of bind pose, refer to joint axis.
+	//                           Z
+	//                           |
+	//                           |
+	//      0---Y            X---0
+	//     /|        ----\      /
+	//    / |        ----/     /
+	//   Z  X                 Y
+	// note that their parent are hip left and hip right!
+	if (idx == NUI_SKELETON_POSITION_ANKLE_LEFT || idx == NUI_SKELETON_POSITION_ANKLE_RIGHT) {
+		float t = q.x;
+		q.x = -q.y;
+		q.y = q.z;
+		q.z = -t;
+	}
 
 	// roll a few bones to make the skeleton T pose
 	Vec_Math::Quaternion q_delta;
@@ -306,9 +337,9 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 		q_delta = q;
 	}
 
-	// convert the quaternion to euler angles by different orders to get right euler angles
+	// convert the quaternion to euler angles
 	Quat2Euler::Quaternion q_to_convert(q_delta.x, q_delta.y, q_delta.z, q_delta.w);
-	Quat2Euler::quaternion2Euler(q_to_convert, angles, (idx < NUI_SKELETON_POSITION_HIP_LEFT) ? Quat2Euler::zxy : Quat2Euler::zyx);
+	Quat2Euler::quaternion2Euler(q_to_convert, angles, Quat2Euler::zxy);
 
 	if (idx == NUI_SKELETON_POSITION_SHOULDER_LEFT) {
 		// rotate around yaw, turn the arm from back to front
@@ -324,36 +355,22 @@ void KinectBVH::GetAngles(KinectJoint *joints, int idx, double angles[])
 	if (idx == NUI_SKELETON_POSITION_HIP_LEFT ||
 		idx == NUI_SKELETON_POSITION_HIP_RIGHT ||
 		idx == NUI_SKELETON_POSITION_KNEE_LEFT ||
-		idx == NUI_SKELETON_POSITION_KNEE_RIGHT) {
+		idx == NUI_SKELETON_POSITION_KNEE_RIGHT ||
+		idx == NUI_SKELETON_POSITION_ANKLE_LEFT ||
+		idx == NUI_SKELETON_POSITION_ANKLE_RIGHT) {
 		// flip pitch data
 		angles[0] = -angles[0];
-		// flip yaw data
-		angles[1] = -angles[1];
 	}
 
 	// adjust kinect angle slightly
 	if (idx == NUI_SKELETON_POSITION_HIP_CENTER) {
-		angles[0] -= 4. * Vec_Math::kDegToRad;
+		angles[0] -= 2. * Vec_Math::kDegToRad;
 	}
 
 	// adjust kinect angle slightly
 	if (idx == NUI_SKELETON_POSITION_HIP_LEFT ||
 		idx == NUI_SKELETON_POSITION_HIP_RIGHT) {
-		angles[0] -= 8. * Vec_Math::kDegToRad;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_ANKLE_LEFT) {
-		// swap yaw and roll
-		double t = angles[1];
-		angles[1] = angles[2];
-		angles[2] = t;
-	}
-
-	if (idx == NUI_SKELETON_POSITION_ANKLE_RIGHT) {
-		// swap yaw and roll
-		double t = angles[1];
-		angles[1] = angles[2];
-		angles[2] = t;
+		angles[0] -= 16. * Vec_Math::kDegToRad;
 	}
 
 	// clamp to valid range
