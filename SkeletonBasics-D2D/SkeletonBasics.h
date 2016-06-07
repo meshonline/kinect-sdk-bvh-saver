@@ -1,4 +1,4 @@
-﻿//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // <copyright file="SkeletonBasics.h" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
@@ -97,6 +97,9 @@ private:
     ID2D1SolidColorBrush*    m_pBrushBoneTracked;
     ID2D1SolidColorBrush*    m_pBrushBoneInferred;
     D2D1_POINT_2F            m_Points[NUI_SKELETON_POSITION_COUNT];
+    ID2D1SolidColorBrush*    m_pBrushAxisX;
+    ID2D1SolidColorBrush*    m_pBrushAxisY;
+    ID2D1SolidColorBrush*    m_pBrushAxisZ;
 
     // Direct2D
     ID2D1Factory*           m_pD2DFactory;
@@ -107,7 +110,7 @@ private:
 	/**
 	* Conversion et envoi des matrices de rotation pour la g閚閞ation du fichier BVH
 	*/
-	void ProcessBonesOrientation(const NUI_SKELETON_DATA &);
+	void ProcessBonesOrientation(const NUI_SKELETON_DATA &, int, int);
 
 	/// <summary>
     /// Main processing function
