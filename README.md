@@ -4,7 +4,9 @@ This project is based on the official Kinect SDK example, it will automatically 
 <br/>
 Then you can import the bvh files into Blender or other softwares to smooth animation curves. I use Blender's default smooth key setting to smooth all rotation channels, the results is acceptable.<br/>
 <br/>
-The project has disabled kinect's built in smooth feature by default, for the result is poor, if you want to enable the built in smooth feature, there is a macro definition named 'FILTER_MODE', change it from 0 to 1, 2, 3 to enable three types of smooth feature.
+There is a macro definition named 'FILTER_MODE', change it from 1 to 2 or 3 to enable three types of smooth features.<br/>
+<br/>
+There is a macro definition named 'DRAW_BONE_AXIS', change it to 0 to disable the feature.
 ### Requirements
 Windows 7(32 bit or 64 bit)<br/>
 kinect for xbox 360.<br/>
