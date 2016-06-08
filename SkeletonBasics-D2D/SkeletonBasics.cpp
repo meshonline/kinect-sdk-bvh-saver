@@ -11,7 +11,8 @@
 #include <time.h>
 
 #define FILTER_MODE 1
-#define DRAW_BONE_AXIS 1
+#define DRAW_BONE_AXIS true
+#define MIRROR_MODE false
 
 // Some smoothing with little latency (defaults).
 // Only filters out small jitters.
@@ -282,7 +283,7 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 		joints[i] = joint;
 
 		// draw axis
-		if (DRAW_BONE_AXIS == 1) {
+		if (DRAW_BONE_AXIS) {
 			NUI_SKELETON_POSITION_TRACKING_STATE jointState = skel.eSkeletonPositionTrackingState[i];
 		    if (jointState == NUI_SKELETON_POSITION_TRACKED)
 			{
@@ -299,7 +300,7 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 				float scale_ratio = 0.1f;
 
 				arrow = Vec_Math::quat_get_x_axis(q);
-				point_3d.x = skel.SkeletonPositions[i].x - arrow.x * scale_ratio;
+				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
 				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
 				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
 				point_3d.w = skel.SkeletonPositions[i].w;
@@ -307,7 +308,7 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 				m_pRenderTarget->DrawLine(m_Points[i], point_2d, m_pBrushAxisX, 3.0f);
 
 				arrow = Vec_Math::quat_get_y_axis(q);
-				point_3d.x = skel.SkeletonPositions[i].x - arrow.x * scale_ratio;
+				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
 				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
 				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
 				point_3d.w = skel.SkeletonPositions[i].w;
@@ -315,7 +316,7 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 				m_pRenderTarget->DrawLine(m_Points[i], point_2d, m_pBrushAxisY, 3.0f);
 
 				arrow = Vec_Math::quat_get_z_axis(q);
-				point_3d.x = skel.SkeletonPositions[i].x - arrow.x * scale_ratio;
+				point_3d.x = skel.SkeletonPositions[i].x + arrow.x * scale_ratio;
 				point_3d.y = skel.SkeletonPositions[i].y + arrow.y * scale_ratio;
 				point_3d.z = skel.SkeletonPositions[i].z + arrow.z * scale_ratio;
 				point_3d.w = skel.SkeletonPositions[i].w;
@@ -770,7 +771,7 @@ D2D1_POINT_2F CSkeletonBasics::SkeletonToScreen(Vector4 skeletonPoint, int width
     // NuiTransformSkeletonToDepthImage returns coordinates in NUI_IMAGE_RESOLUTION_320x240 space
     NuiTransformSkeletonToDepthImage(skeletonPoint, &x, &y, &depth);
 
-    float screenPointX = static_cast<float>(x * width) / cScreenWidth;
+    float screenPointX = static_cast<float>((MIRROR_MODE ? x : cScreenWidth - x) * width) / cScreenWidth;
     float screenPointY = static_cast<float>(y * height) / cScreenHeight;
 
     return D2D1::Point2F(screenPointX, screenPointY);
