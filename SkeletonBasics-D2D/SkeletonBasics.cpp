@@ -12,7 +12,7 @@
 
 #define FILTER_MODE 1
 #define DRAW_BONE_AXIS true
-#define MIRROR_MODE false
+#define MIRROR_MODE true
 
 // Some smoothing with little latency (defaults).
 // Only filters out small jitters.
@@ -270,7 +270,11 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
 	KinectJoint joints[NUI_SKELETON_POSITION_COUNT];
 
 	// Position de Hip Center
-	m_pKinectBVH->AddPosition(skel.SkeletonPositions[NUI_SKELETON_POSITION_HIP_CENTER]);
+	Vector4 hip_pos = skel.SkeletonPositions[NUI_SKELETON_POSITION_HIP_CENTER];
+    // convert to OpenGL's right hand coordinate
+	hip_pos.x = -hip_pos.x;
+	hip_pos.z = -hip_pos.z;
+	m_pKinectBVH->AddPosition(hip_pos);
 
 	// Matrice de rotations des joints
 	for (int i = 0; i < NUI_SKELETON_POSITION_COUNT; i++)
@@ -278,7 +282,10 @@ void CSkeletonBasics::ProcessBonesOrientation(const NUI_SKELETON_DATA &skel, int
         NUI_SKELETON_BONE_ORIENTATION &orientation = boneOrientations[i];
 
 		KinectJoint joint;
-		joint.quat = (i==0)?orientation.absoluteRotation.rotationQuaternion:orientation.hierarchicalRotation.rotationQuaternion;
+		joint.pos = skel.SkeletonPositions[i];
+        // convert to OpenGL's right hand coordinate
+		joint.pos.x = -joint.pos.x;
+		joint.pos.z = -joint.pos.z;
 
 		joints[i] = joint;
 
