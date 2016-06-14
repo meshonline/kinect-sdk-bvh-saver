@@ -20,6 +20,7 @@ using namespace std;
 struct KinectJoint
 {
 	Vector4 quat;
+	Vector4 pos;
 };
 
 /**
@@ -65,11 +66,8 @@ private:
 	// Fichier
 	ofstream m_pFile;
 
-	// pre-calculated quaternions
-	Vec_Math::Quaternion q_z_30;
-	Vec_Math::Quaternion q_z_n30;
-	Vec_Math::Quaternion q_z_43;
-	Vec_Math::Quaternion q_z_n43;
+	// parent joint maps
+    NUI_SKELETON_POSITION_INDEX parent_joint_map[NUI_SKELETON_POSITION_COUNT];
 
 	// Offsets
 	vector<Vector4> m_aOffsets;
@@ -81,7 +79,7 @@ private:
 	// Nombre de frames
 	int m_nbFrame;
 
-	void GetAngles(KinectJoint *, int, double []);
+	Vec_Math::Vec3 GetEulers(KinectJoint *, int);
 
 	/**
 	* G閚鑢e la description du squelette pour le BVH
@@ -91,6 +89,8 @@ private:
 	* G閚鑢e les donn閑s des mouvements pour le BVH
 	*/
 	void CreateMotionInformation();
+    void CorrectKinect();
+    void CreateQuaternionInformation();
 };
 
 #endif // KINECTBVH_H
