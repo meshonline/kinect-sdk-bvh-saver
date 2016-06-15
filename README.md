@@ -6,7 +6,9 @@ Then you can import the bvh files into Blender or other softwares to smooth anim
 <br/>
 There is a macro definition named 'FILTER_MODE', change it from 1 to 2 or 3 to enable three types of smooth features.<br/>
 <br/>
-There is a macro definition named 'DRAW_BONE_AXIS', change it to 0 to disable the feature.
+There is a macro definition named 'DRAW_BONE_AXIS', change it to false to disable the feature.<br/>
+<br/>
+There is a macro definition named 'MIRROR_MODE', change it to false to disable the feature.
 ### Requirements
 Windows 7(32 bit or 64 bit)<br/>
 kinect for xbox 360.<br/>
@@ -14,7 +16,7 @@ Microsoft Kinect for Windows SDK 1.7<br/>
 Microsoft Visual Studio 2010 Express Edition
 ### How to use
 1.Install Microsoft Kinect for Windows SDK 1.7.<br/>
-2.Plug kinect for xbox 360<br/>
+2.Plug in kinect for xbox 360<br/>
 3.Install Microsoft Visual Studio 2010 Express Edition.<br/>
 4.Open the project, build and run.<br/>
 <br/>
